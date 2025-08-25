@@ -1,0 +1,35 @@
+# Configurações locais e dados sensíveis
+.env
+.env.local
+.env.*.local
+
+# Dados do Gitea
+gitea-dados/
+gitea-backups/
+
+# Logs
+*.log
+logs/
+
+# Arquivos temporários
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# Arquivos de backup locais
+*.backup
+*.bak
+
+# Certificados SSL
+*.pem
+*.key
+*.crt
+*.cert
+
+# Arquivos do sistema
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

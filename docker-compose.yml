@@ -1,0 +1,78 @@
+services:
+  gitea:
+    image: gitea/gitea:${GITEA_VERSION:-latest}
+    container_name: ${COMPOSE_PROJECT_NAME:-gitea}_servidor
+    restart: unless-stopped
+    
+    environment:
+      # Configurações do sistema
+      - USER_UID=${USER_UID:-1000}
+      - USER_GID=${USER_GID:-1000}
+      - TZ=${TZ:-UTC}
+      
+      # Configurações do Gitea
+      - GITEA__server__DOMAIN=${GITEA_DOMAIN:-localhost}
+      - GITEA__server__ROOT_URL=${GITEA_ROOT_URL:-http://localhost:3000}
+      - GITEA__server__SSH_DOMAIN=${GITEA_DOMAIN:-localhost}
+      - GITEA__server__SSH_PORT=${HOST_PORT_SSH:-2222}
+      
+      # Configurações de segurança
+      - GITEA__security__SECRET_KEY=${GITEA_SECRET_KEY}
+      - GITEA__security__JWT_SECRET=${GITEA_JWT_SECRET}
+      - GITEA__security__INSTALL_LOCK=true
+      
+      # Configurações de backup automático
+      - GITEA__cron__ENABLED=true
+      - GITEA__cron_dump_backup__ENABLED=true
+      - GITEA__cron_dump_backup__SCHEDULE=${BACKUP_SCHEDULE:-@daily}
+      - GITEA__cron_dump_backup__DUMP_OPTIONS=--target /backups/ --max-files ${BACKUP_MAX_FILES:-7}
+      
+      # Configurações de email (se habilitado)
+      - GITEA__mailer__ENABLED=${GITEA_MAILER_ENABLED:-false}
+      - GITEA__mailer__HOST=${GITEA_MAILER_HOST:-}
+      - GITEA__mailer__PORT=${GITEA_MAILER_PORT:-587}
+      - GITEA__mailer__USER=${GITEA_MAILER_USER:-}
+      - GITEA__mailer__PASSWD=${GITEA_MAILER_PASSWORD:-}
+      - GITEA__mailer__FROM=${GITEA_MAILER_USER:-}
+      
+      # Configurações de performance
+      - GITEA__database__DB_TYPE=sqlite3
+      - GITEA__database__PATH=/data/gitea/gitea.db
+      - GITEA__log__LEVEL=Info
+    
+    volumes:
+      - ./gitea-dados:/data
+      - ./gitea-backups:/backups
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    
+    ports:
+      - "${HOST_PORT_WEB:-3000}:3000"
+      - "${HOST_PORT_SSH:-2222}:22"
+    
+    networks:
+      - gitea-network
+    
+    deploy:
+      resources:
+        limits:
+          memory: ${GITEA_MEMORY_LIMIT:-512m}
+          cpus: '${GITEA_CPU_LIMIT:-1.0}'
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  gitea-network:
+    driver: bridge
+    name: ${COMPOSE_PROJECT_NAME:-gitea}_network
+
+volumes:
+  gitea-dados:
+    driver: local
+  gitea-backups:
+    driver: local
