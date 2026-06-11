@@ -1,30 +1,38 @@
-# 🦫 Gitea Stack - Sistema de Controle de Versão
+# 🦫 Gitea CI Self-hosted
 
-> Sistema Git auto-hospedado, pronto para produção, com backup automático e configuração profissional.
+> Git + CI auto-hospedados em um único `docker-compose`: Gitea, Gitea Actions e `act_runner` — zero minutos de CI em nuvem, com backup automático e configuração pronta para produção.
 
-Este projeto oferece uma solução completa para auto-hospedagem do Gitea utilizando Docker. O objetivo é simplificar drasticamente o processo de instalação, configuração e manutenção, incluindo recursos essenciais como backups automáticos, segurança aprimorada e fácil atualização. Ideal para equipes e desenvolvedores que buscam um controle de versão Git privado, robusto e de baixo custo.
+Este projeto oferece uma solução completa para auto-hospedar **controle de versão Git e integração contínua (CI)** com o Gitea. Além da instalação simplificada do servidor (backups automáticos, segurança reforçada, fácil atualização), o stack habilita o **Gitea Actions** e inclui um **runner self-hosted (`act_runner`)** opcional — seus workflows rodam na sua própria máquina, com sintaxe compatível com a do GitHub Actions e **sem consumir minutos de CI de plataformas em nuvem**.
+
+Ideal para desenvolvedores solo e equipes pequenas que querem um fluxo completo — repositório privado, branch protegida, PR e pipeline de CI — rodando inteiro em hardware próprio.
 
 ## ✨ Principais Recursos
-- **Instalação Automatizada:** Configure e inicie todo o ambiente com um único script (`setup.sh`).
-- **Backups Automáticos:** Backups diários e rotacionados (últimos 7 dias) para garantir a segurança dos seus dados.
-- **Segurança Reforçada:** Chaves secretas geradas automaticamente, rede Docker isolada e limites de recursos pré-configurados.
-- **Fácil Manutenção:** Scripts dedicados para backup, restauração e atualização do sistema.
-- **Configuração Flexível:** Todas as configurações importantes centralizadas no arquivo `.env`.
-- **Pronto para Produção:** Inclui healthchecks e políticas de reinício para maior estabilidade.
+
+- **Git + CI no mesmo stack:** Gitea Actions habilitado por padrão e runner `act_runner` incluído como serviço opcional (profile `ci`).
+- **Zero minutos de nuvem:** os workflows executam no runner local — útil inclusive como segundo destino de push de repositórios hospedados em outra plataforma.
+- **Instalação Automatizada:** configure e inicie todo o ambiente com um único script (`setup.sh`).
+- **Backups Automáticos:** backups diários e rotacionados (últimos 7 dias).
+- **Segurança Reforçada:** chaves secretas geradas automaticamente, rede Docker isolada e limites de recursos pré-configurados.
+- **Fácil Manutenção:** scripts dedicados para backup, restauração e atualização.
+- **Configuração Flexível:** tudo centralizado no arquivo `.env`.
+- **Pronto para Produção:** healthchecks e políticas de reinício.
+- **Amigável a agentes de IA:** arquivo [`llms.txt`](./llms.txt) na raiz e [skills prontas para Claude Code](./docs/AGENTES-IA.md) que operam o fluxo de PR via API.
 
 ## 📋 Pré-requisitos
+
 - Docker 20.10+
 - Docker Compose 2.0+
-- 2GB RAM disponível
+- 2GB RAM disponível (runner de CI ativo: recomenda-se 4GB)
 - 10GB espaço em disco
 
 ## 🚀 Instalação Rápida
 
 ### 1. Clone o projeto
+
 ```bash
-git clone git@github.com:alexjesustech/gitea-stack.git
-cd gitea-stack
-````
+git clone git@github.com:alexjesustech/gitea-ci-self-hosted.git
+cd gitea-ci-self-hosted
+```
 
 ### 2. Configure seu ambiente
 
@@ -48,22 +56,60 @@ chmod +x scripts/setup.sh
 
 Aguarde um ou dois minutos para o serviço iniciar completamente e acesse `http://localhost:3000` (ou a porta que você configurou na variável `HOST_PORT_WEB`).
 
+### 5. (Opcional) Ative a CI self-hosted
+
+Gere o token de registro do runner e suba o serviço com o profile `ci`:
+
+```bash
+docker compose exec gitea gitea actions generate-runner-token
+# cole o token em RUNNER_REGISTRATION_TOKEN no .env
+docker compose --profile ci up -d
+```
+
+Guia completo (labels, workflows, fluxo com branch protegida, segurança): [`docs/CI.md`](./docs/CI.md).
+
 ## ⚙️ Configuração
 
 Todas as configurações são gerenciadas através do arquivo `.env`. As principais variáveis são:
 
-- `GITEA_DOMAIN`: Seu domínio (ex: `gitea.meudominio.com`).
-- `HOST_PORT_WEB`: Porta HTTP que será exposta no seu host (ex: `3000`).
-- `TZ`: Fuso horário para os contêineres (ex: `America/Porto_Velho`).
-- `BACKUP_SCHEDULE`: Horário do backup no formato cron (padrão: `0 3 * * *` - todo dia às 3h da manhã).
+- `GITEA_DOMAIN`: seu domínio (ex: `gitea.meudominio.com`).
+- `HOST_PORT_WEB`: porta HTTP exposta no host (ex: `3000`).
+- `TZ`: fuso horário dos contêineres (ex: `America/Porto_Velho`).
+- `BACKUP_SCHEDULE`: horário do backup em formato cron (padrão: `0 3 * * *`).
+- `GITEA_ACTIONS_ENABLED`: habilita o Gitea Actions no servidor (padrão: `true`).
+- `RUNNER_REGISTRATION_TOKEN`: token de registro do runner de CI (ver [`docs/CI.md`](./docs/CI.md)).
+- `RUNNER_LABELS`: labels que mapeiam o `runs-on` dos workflows para a imagem de execução.
+
+## 🔁 Fluxo recomendado: branch protegida + PR + CI
+
+A experiência de operar este stack no dia a dia consolidou um fluxo que vale adotar desde o início:
+
+1. **Proteja a `main`** no Gitea (Configurações do repositório → Branches): nem o admin consegue push direto — o hook `pre-receive` rejeita.
+2. **Trabalhe em feature branches** e integre via Pull Request.
+3. **Deixe a CI ser o gate do merge:** o `act_runner` executa os workflows do PR; só mergeie com checks verdes.
+
+> 💡 Com a `main` protegida, um `git push origin main` rejeitado com `pre-receive hook declined` **é o comportamento esperado**, não um erro de autenticação. Integre via PR.
+
+Detalhes, armadilhas e dicas de operação em [`docs/CI.md`](./docs/CI.md).
+
+## 🤖 Automação com agentes de IA
+
+Este repositório é pensado para ser operado também por agentes LLM (Claude Code e similares):
+
+- [`llms.txt`](./llms.txt) na raiz orienta LLMs sobre o projeto e sua documentação.
+- [`AGENTS.md`](./AGENTS.md) define as convenções que agentes devem seguir ao contribuir.
+- Skills públicas para Claude Code automatizam o fluxo de PR contra um Gitea self-hosted — destaque para a **`gitea-pr-merge`**, que revisa diff, commits e status de CI e só mergeia com checks verdes + confirmação humana. Ver [`docs/AGENTES-IA.md`](./docs/AGENTES-IA.md).
 
 ## 🛠️ Comandos Úteis (Docker)
 
 Execute os comandos a partir do diretório raiz do projeto.
 
 ```bash
-# Iniciar serviços em background
+# Iniciar serviços em background (somente Gitea)
 docker compose up -d
+
+# Iniciar incluindo o runner de CI
+docker compose --profile ci up -d
 
 # Ver logs de todos os serviços em tempo real
 docker compose logs -f
@@ -93,12 +139,16 @@ Os scripts a seguir automatizam as principais tarefas de manutenção.
 ## 📁 Estrutura de Diretórios
 
 ```
-gitea-gitea-stack/
+gitea-ci-self-hosted/
 ├── .env                   # Configurações locais (NÃO versionar)
 ├── .env.example           # Modelo para outros ambientes
-├── docker-compose.yml     # Estrutura principal
+├── docker-compose.yml     # Gitea + act_runner (profile ci)
 ├── .gitignore             # Arquivos a ignorar no Git
-├── README.md              # Documentação completa
+├── README.md              # Este documento
+├── AGENTS.md              # Convenções para agentes de IA
+├── CONTRIBUTING.md        # Guia de contribuição
+├── llms.txt               # Orientação para LLMs (padrão llmstxt.org)
+├── CHANGELOG.md           # Histórico de mudanças
 ├── scripts/               # Scripts de automação
 │   ├── setup.sh           # Script de instalação
 │   ├── backup.sh          # Backup manual
@@ -108,17 +158,34 @@ gitea-gitea-stack/
 │   └── app.ini.template   # Template de configuração
 └── docs/                  # Documentação adicional
     ├── INSTALL.md         # Guia de instalação
+    ├── CI.md              # Guia de CI self-hosted (Actions + act_runner)
+    ├── AGENTES-IA.md      # Automação com agentes LLM (skills, llms.txt)
     ├── BACKUP.md          # Guia de backup
     └── TROUBLESHOOTING.md # Solução de problemas
 
-# Dados Persistentes (Volumes criados no host)
+# Dados Persistentes (volumes criados no host)
 gitea-dados/               # Dados principais do Gitea (repos, db, etc.)
 gitea-backups/             # Backups automáticos (últimos 7 dias)
+runner-dados/              # Estado do act_runner (registro, cache)
 ```
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas — issues e Pull Requests abertos a todos. Melhorias de documentação, do `docker-compose.yml`, dos scripts e do troubleshooting são as mais valiosas. Leia o [`CONTRIBUTING.md`](./CONTRIBUTING.md) para o fluxo (fork → `feature/<slug>` → Conventional Commits → PR); todo PR externo passa por revisão manual do mantenedor.
+
+## 💙 Sobre o Gitea — o projeto original
+
+Este repositório é apenas o **empacotamento**: todo o mérito do servidor Git, da interface e do sistema de CI é do **[Gitea](https://github.com/go-gitea/gitea)** — um serviço de hospedagem Git completo (repositórios, issues, PRs, wiki, packages, CI/CD com Gitea Actions), escrito em Go, **leve o bastante para rodar num Raspberry Pi**, de código aberto (MIT) e mantido pela comunidade.
+
+- 🏠 Site oficial: [about.gitea.com](https://about.gitea.com) · 📚 Documentação: [docs.gitea.com](https://docs.gitea.com)
+- ⭐ Repositório: [github.com/go-gitea/gitea](https://github.com/go-gitea/gitea) — se este stack te foi útil, a estrela vai lá
+- ⚙️ Runner de CI: [gitea.com/gitea/act_runner](https://gitea.com/gitea/act_runner)
 
 ## 🆘 Suporte
 
 - 📖 [Guia de Instalação](./docs/INSTALL.md)
+- ⚙️ [Guia de CI Self-hosted](./docs/CI.md)
+- 🤖 [Automação com Agentes de IA](./docs/AGENTES-IA.md)
 - 🔧 [Solução de Problemas](./docs/TROUBLESHOOTING.md)
 - 💾 [Guia de Backup](./docs/BACKUP.md)
 

@@ -1,6 +1,6 @@
-# 📖 Guia de Instalação Detalhado - Gitea Stack
+# 📖 Guia de Instalação Detalhado - Gitea CI Self-hosted
 
-Este documento fornece instruções detalhadas para a instalação e configuração do Gitea Stack. Ele é um complemento ao guia de "Instalação Rápida" presente no `README.md` principal.
+Este documento fornece instruções detalhadas para a instalação e configuração do Gitea CI Self-hosted. Ele é um complemento ao guia de "Instalação Rápida" presente no `README.md` principal.
 
 ## 1. Pré-requisitos
 
@@ -19,16 +19,16 @@ Clone o repositório para sua máquina local usando Git.
 
 ```bash  
 # Usando HTTPS  
-git clone [https://github.com/alexjesustech/gitea-stack.git](https://github.com/alexjesustech/gitea-stack.git)
+git clone https://github.com/alexjesustech/gitea-ci-self-hosted.git
 ```
 
 ```bash
 # Ou usando SSH  
-git clone git@github.com:alexjesustech/gitea-stack.git
+git clone git@github.com:alexjesustech/gitea-ci-self-hosted.git
 ```
 
 ### Navegue para o diretório do projeto  
-cd gitea-stack
+cd gitea-ci-self-hosted
 
 ## 3. Configurando o Ambiente (.env)
 
@@ -117,4 +117,4 @@ docker compose logs -f gitea
 
 Abra seu navegador e acesse o endereço configurado (ex: http://localhost:3000 ou http://seu-dominio.com). A primeira página permitirá que você crie a conta do administrador. Preencha os dados para finalizar a instalação.
 
-Parabéns, seu Gitea Stack está instalado e funcionando!
+Parabéns, seu Gitea está instalado e funcionando! Para ativar a CI self-hosted (Gitea Actions + act_runner), siga o [Guia de CI](./CI.md).
