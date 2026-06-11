@@ -86,3 +86,4 @@ Práticas consolidadas pela operação contínua deste arranjo:
 | `pre-receive hook declined` no push da `main` | Branch protegida (esperado) | Integrar via PR |
 | Workflow não dispara | Arquivo fora de `.gitea/workflows/`, ou Actions desabilitado no repo | Mover o YAML; habilitar Actions nas configurações do repositório |
 | Job falha ao usar `uses:` de action externa | Sem acesso à internet ou mirror de actions não configurado | Conferir rede do container; o Gitea resolve actions de `gitea.com` e GitHub por padrão |
+| Step `run` falha com `exitcode '127'` / `exec: "bash": executable file not found` | A imagem do label não tem `bash` (ex.: imagens Alpine) — os steps `run` executam com bash por padrão | Usar imagem base Debian/Ubuntu no label (ex.: `gitea/runner-images:ubuntu-latest`) ou definir `shell: sh` no step |
