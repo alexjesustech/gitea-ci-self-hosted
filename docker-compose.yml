@@ -39,6 +39,9 @@ services:
       - GITEA__database__DB_TYPE=sqlite3
       - GITEA__database__PATH=/data/gitea/gitea.db
       - GITEA__log__LEVEL=Info
+
+      # CI self-hosted (Gitea Actions)
+      - GITEA__actions__ENABLED=${GITEA_ACTIONS_ENABLED:-true}
     
     volumes:
       - ./gitea-dados:/data
@@ -65,6 +68,34 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+  runner:
+    image: gitea/act_runner:${RUNNER_VERSION:-0.2.13}
+    container_name: ${COMPOSE_PROJECT_NAME:-gitea}_runner
+    restart: unless-stopped
+    # Serviço opcional: suba com `docker compose --profile ci up -d`
+    profiles:
+      - ci
+
+    depends_on:
+      gitea:
+        condition: service_healthy
+
+    environment:
+      - TZ=${TZ:-UTC}
+      # URL interna da rede Docker (o runner fala com o Gitea pelo nome do serviço)
+      - GITEA_INSTANCE_URL=${RUNNER_INSTANCE_URL:-http://gitea:3000}
+      - GITEA_RUNNER_REGISTRATION_TOKEN=${RUNNER_REGISTRATION_TOKEN}
+      - GITEA_RUNNER_NAME=${RUNNER_NAME:-runner-local}
+      - GITEA_RUNNER_LABELS=${RUNNER_LABELS:-ubuntu-latest:docker://gitea/runner-images:ubuntu-latest}
+
+    volumes:
+      - ./runner-dados:/data
+      # O runner executa os jobs em containers irmãos via socket do Docker
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    networks:
+      - gitea-network
 
 networks:
   gitea-network:

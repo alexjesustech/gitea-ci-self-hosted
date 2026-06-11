@@ -6,6 +6,10 @@
 # Dados do Gitea
 gitea-dados/
 gitea-backups/
+runner-dados/
+
+# Planejamento interno do mantenedor (local-only em repo público)
+docs/ESTADO.md
 
 # Logs
 *.log
