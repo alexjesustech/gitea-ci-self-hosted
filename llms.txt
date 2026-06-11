@@ -14,6 +14,7 @@ Fatos importantes para agentes:
 
 - [README](README.md): visão geral, instalação rápida, configuração e comandos
 - [AGENTS.md](AGENTS.md): convenções que agentes de IA devem seguir ao contribuir
+- [CONTRIBUTING.md](CONTRIBUTING.md): fluxo de contribuição (issues, fork, PR, revisão manual)
 - [Guia de CI self-hosted](docs/CI.md): Gitea Actions, act_runner, labels, fluxo com branch protegida, segurança e troubleshooting
 - [Automação com agentes de IA](docs/AGENTES-IA.md): skills para Claude Code (gitea-pr, gitea-pr-merge, gitea-claude-mention) e boas práticas de token
 - [Guia de instalação detalhado](docs/INSTALL.md): pré-requisitos, .env e verificação pós-instalação
@@ -22,6 +23,7 @@ Fatos importantes para agentes:
 
 ## Optional
 
+- [Gitea (projeto original)](https://github.com/go-gitea/gitea): o servidor Git + CI que este stack empacota — escrito em Go, MIT, mantido pela comunidade
 - [Catálogo de skills para Claude Code](https://github.com/alexjesustech/skills): skills públicas, incluindo a categoria git/ usada com este stack
 - [Documentação oficial do Gitea Actions](https://docs.gitea.com/usage/actions/overview)
 - [act_runner](https://gitea.com/gitea/act_runner)

@@ -146,6 +146,7 @@ gitea-ci-self-hosted/
 ├── .gitignore             # Arquivos a ignorar no Git
 ├── README.md              # Este documento
 ├── AGENTS.md              # Convenções para agentes de IA
+├── CONTRIBUTING.md        # Guia de contribuição
 ├── llms.txt               # Orientação para LLMs (padrão llmstxt.org)
 ├── CHANGELOG.md           # Histórico de mudanças
 ├── scripts/               # Scripts de automação
@@ -167,6 +168,18 @@ gitea-dados/               # Dados principais do Gitea (repos, db, etc.)
 gitea-backups/             # Backups automáticos (últimos 7 dias)
 runner-dados/              # Estado do act_runner (registro, cache)
 ```
+
+## 🤝 Contribuindo
+
+Contribuições são bem-vindas — issues e Pull Requests abertos a todos. Melhorias de documentação, do `docker-compose.yml`, dos scripts e do troubleshooting são as mais valiosas. Leia o [`CONTRIBUTING.md`](./CONTRIBUTING.md) para o fluxo (fork → `feature/<slug>` → Conventional Commits → PR); todo PR externo passa por revisão manual do mantenedor.
+
+## 💙 Sobre o Gitea — o projeto original
+
+Este repositório é apenas o **empacotamento**: todo o mérito do servidor Git, da interface e do sistema de CI é do **[Gitea](https://github.com/go-gitea/gitea)** — um serviço de hospedagem Git completo (repositórios, issues, PRs, wiki, packages, CI/CD com Gitea Actions), escrito em Go, **leve o bastante para rodar num Raspberry Pi**, de código aberto (MIT) e mantido pela comunidade.
+
+- 🏠 Site oficial: [about.gitea.com](https://about.gitea.com) · 📚 Documentação: [docs.gitea.com](https://docs.gitea.com)
+- ⭐ Repositório: [github.com/go-gitea/gitea](https://github.com/go-gitea/gitea) — se este stack te foi útil, a estrela vai lá
+- ⚙️ Runner de CI: [gitea.com/gitea/act_runner](https://gitea.com/gitea/act_runner)
 
 ## 🆘 Suporte
 

@@ -14,6 +14,8 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 - `llms.txt` na raiz (padrão [llmstxt.org](https://llmstxt.org/)) — orientação para LLMs sobre o projeto e o mapa da documentação.
 - `AGENTS.md` na raiz — convenções para agentes de IA que contribuem com o repositório.
 - Este `CHANGELOG.md`.
+- `CONTRIBUTING.md` — projeto aberto a colaboração: fluxo de issues e PRs (fork → `feature/<slug>` → Conventional Commits → revisão manual do mantenedor).
+- `README.md`: seção "Contribuindo" e seção "Sobre o Gitea — o projeto original" creditando e divulgando o upstream [go-gitea/gitea](https://github.com/go-gitea/gitea) (site, docs, act_runner); links correspondentes no `llms.txt`.
 
 ### Changed
 
