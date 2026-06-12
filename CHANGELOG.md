@@ -21,6 +21,8 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ### Changed
 
+- Convenção de continuidade renomeada: docs/ESTADO.md → docs/HANDOFF.md (2026-06-11).
+
 - **Projeto renomeado de `gitea-stack` para `gitea-ci-self-hosted`** e reposicionado: de "sistema de controle de versão" para **Git + CI auto-hospedados** (Gitea + Gitea Actions + act_runner, zero minutos de CI em nuvem).
 - `README.md` reescrito para o novo posicionamento (seções de CI, fluxo branch protegida + PR e automação com agentes de IA); corrigida a estrutura de diretórios (`gitea-gitea-stack/` → `gitea-ci-self-hosted/`).
 - URLs de clone atualizadas em `README.md` e `docs/INSTALL.md` para o novo nome do repositório.
