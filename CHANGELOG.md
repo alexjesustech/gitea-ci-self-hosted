@@ -8,6 +8,8 @@ O formato segue o [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e 
 
 ### Added
 
+- README: seção `## 📊 Status` (maturidade SemVer).
+
 - `docs/CI.md`: linha de troubleshooting para step `run` com `exitcode '127'` (`bash` ausente em imagens Alpine usadas como label do runner) — achado da validação de ponta a ponta do stack.
 
 - **CI self-hosted:** Gitea Actions habilitado por padrão (`GITEA_ACTIONS_ENABLED`) e serviço `runner` (`act_runner`) no `docker-compose.yml`, opcional via profile `ci`, com variáveis documentadas no `.env.example`.

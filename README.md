@@ -6,6 +6,11 @@ Este projeto oferece uma solução completa para auto-hospedar **controle de ver
 
 Ideal para desenvolvedores solo e equipes pequenas que querem um fluxo completo — repositório privado, branch protegida, PR e pipeline de CI — rodando inteiro em hardware próprio.
 
+## 📊 Status
+
+`0.1.0` — funcional para uso self-hosted. Versionado por [SemVer](https://semver.org/lang/pt-BR/)
+(`0.y.z` = a configuração ainda pode mudar).
+
 ## ✨ Principais Recursos
 
 - **Git + CI no mesmo stack:** Gitea Actions habilitado por padrão e runner `act_runner` incluído como serviço opcional (profile `ci`).
